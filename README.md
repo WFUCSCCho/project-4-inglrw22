@@ -82,20 +82,43 @@ it to this repository.
 
 Insertion, search, and deletion running time (already sorted):
 
+![img.png](img.png)
+
 ![Firefly picture of a cat 86147](https://github.com/user-attachments/assets/8b2d008e-3011-4979-97b8-fa2e9886a01a)
 
 
 Insertion, search, and deletion running time (shuffled):
 
+![img_1.png](img_1.png)
+
 Insertion, search, and deletion running time (reversed):
+
+![img_2.png](img_2.png)
 
 ## 5. **Document your Dataset and Results**
 Document the source of your dataset and any modifications you made to it. Describe the results of your analysis and 
 how it compares to the theoretical performance of the hash table operations.
 
-Dataset Source: // FINISH ME
-Dataset Modifications ("None" if unchanged): // FINISH ME
-Result Analysis: // FINISH ME
+Dataset Source: The dataset comes from Kaggle and was originally GDP data for 2020-25 for the world's countries, but
+    I modified the content for it to only include 2025 GDP. https://www.kaggle.com/datasets/codebynadiia/gdp-per-country-20202025
+
+Dataset Modifications ("None" if unchanged):
+    - removed the header row during processing to avoid parsing errors
+    - filtered out entries with empty or invalid GDP values (some countries had missing data)
+    - trimmed whitespace from country names and GDP values to ensure clean data parsing
+    - converted GDP values from strings to integers for storage in the gdp2025 object
+
+Result Analysis:
+We know that hash tables theoretically provide O(1) average case time complexity for insert, search, and 
+delete operations, and our performance analysis had some interesting patterns. Our results showed that
+search and delete operations closely matched this theoretical expectation, maintaining pretty
+constant times across all three data orderings (sorted, shuffled, and reversed). However, insert operations 
+on sorted data showed noticeably higher times than on shuffled and reversed data, which definitely
+contradicted the ideal O(1) behavior. I did some research into possible reasons, and it might be because
+of alphabetically sorted country names producing clustered hash values, which causes collisions. This would
+make the checking for duplicates part of inserting take longer. Despite this, across the board, overall 
+performance was still pretty close to expectation.
+
 
 ## Submission:
 
