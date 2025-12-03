@@ -1,3 +1,12 @@
+/**************************************************************************
+ * @file: SeparateChainingHashTable.java
+ * @description: This program implements a hash table using separate chaining
+ *               for collision resolution. It supports generic types and
+ *               provides O(1) average case operations for insert, search, delete.
+ * @author: Ravi Ingle
+ * @date: December 4, 2025
+ **************************************************************************/
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +37,7 @@ public class SeparateChainingHashTable<AnyType> {
         theLists = new LinkedList[nextPrime(size)];
         for (int i = 0; i < theLists.length; i++)
             theLists[i] = new LinkedList<>();
+        currentSize = 0;
     }
 
     /**
@@ -38,7 +48,18 @@ public class SeparateChainingHashTable<AnyType> {
      * @param x the item to insert.
      */
     public void insert(AnyType x) {
-        // FINISH ME
+        // Get the list at the hashed index
+        List<AnyType> whichList = theLists[myhash(x)];
+
+        // Only insert if the item is not already present
+        if (!whichList.contains(x)) {
+            whichList.add(x);
+            currentSize++;
+
+            // Rehash if load factor exceeds 1.0
+            if (currentSize > theLists.length)
+                rehash();
+        }
     }
 
     /**
@@ -47,24 +68,39 @@ public class SeparateChainingHashTable<AnyType> {
      * @param x the item to remove.
      */
     public void remove(AnyType x) {
-        // FINISH ME
+        // Get the list at the hashed index
+        List<AnyType> whichList = theLists[myhash(x)];
+
+        // Remove the item if it exists
+        if (whichList.contains(x)) {
+            whichList.remove(x);
+            currentSize--;
+        }
     }
 
     /**
      * Find an item in the hash table.
      *
      * @param x the item to search for.
-     * @return true if x is not found.
+     * @return true if x is found, false otherwise.
      */
     public boolean contains(AnyType x) {
-        // FINISH ME
+        // Get the list at the hashed index
+        List<AnyType> whichList = theLists[myhash(x)];
+
+        // Check if the item exists in the list
+        return whichList.contains(x);
     }
 
     /**
-     * Make the hash table logically empty.
+     * Make the hash table logically empty by clearing all lists.
      */
     public void makeEmpty() {
-        // FINISH ME
+        // Clear each linked list in the array
+        for (int i = 0; i < theLists.length; i++) {
+            theLists[i].clear();
+        }
+        currentSize = 0;
     }
 
     /**
@@ -87,10 +123,36 @@ public class SeparateChainingHashTable<AnyType> {
         return hashVal;
     }
 
+    /**
+     * Rehash the table by creating a new table twice the size
+     * and reinserting all elements from the old table.
+     */
     private void rehash() {
-        // FINISH ME
+        // Save the old table
+        List<AnyType>[] oldLists = theLists;
+
+        // Create a new, larger table
+        theLists = new LinkedList[nextPrime(2 * theLists.length)];
+        for (int i = 0; i < theLists.length; i++)
+            theLists[i] = new LinkedList<>();
+
+        // Reset current size
+        currentSize = 0;
+
+        // Copy elements from old table to new table
+        for (int i = 0; i < oldLists.length; i++) {
+            for (AnyType item : oldLists[i]) {
+                insert(item);
+            }
+        }
     }
 
+    /**
+     * Hash function for generic types using their hashCode method.
+     *
+     * @param x the item to hash.
+     * @return the hash index.
+     */
     private int myhash(AnyType x) {
         int hashVal = x.hashCode();
 
@@ -147,5 +209,3 @@ public class SeparateChainingHashTable<AnyType> {
     }
 
 }
-
-
